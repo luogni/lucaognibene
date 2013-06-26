@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, AydroidActivity!</string>
+    <string name="app_name">Aydroid</string>
+    <string name="ay_add_name">Name</string>
+    <string name="form_add_ay_ip">IP</string>
+    <string name="form_add_ay_user">Username</string>
+    <string name="form_add_ay_password">Password</string>
+    <string name="form_add_ay_btn">OK</string>
+
+</resources>

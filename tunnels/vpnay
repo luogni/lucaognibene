@@ -1,0 +1,3 @@
+#!/bin/sh
+cd ~/Progetti/sshuttle
+./sshuttle -r root@62.94.168.69 192.168.5.0/24 -vv

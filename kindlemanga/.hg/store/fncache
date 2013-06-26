@@ -1,0 +1,13 @@
+data/KindleMangaFile.py.i
+data/kindlemanga.py.i
+data/Archive.py.i
+data/FileObject.py.i
+data/FileJob.py.i
+data/ProcessImages.py.i
+data/gui/KindleMangaGUI.fbp.i
+data/gui/remove.bmp.i
+data/KindleMangaLayout.py.i
+data/gui/add.bmp.i
+data/.hgignore.i
+data/setup.py.i
+data/gui/process.bmp.i

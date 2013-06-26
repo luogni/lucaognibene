@@ -1,0 +1,46 @@
+EMACS
+1) git clone git://github.com/gabrielelanaro/emacs-for-python
+2) (load-file "/home/luogni/emacs-for-python/epy-init.el") in .emacs.d/init.el
+
+ * ido-mode: http://emacswiki.org/emacs/InteractivelyDoThings
+ * M-x describe-mode
+ * python
+   * autocomplete
+   * pyflakes: python-check (C-c C-v)
+   * indent shift left/right C-c < / >
+   * rope 
+     * C-x p o -> open rope project (4/, c'e' .ropeproject)
+     * C-x p f -> open file from rope project
+     * C-c d -> see documentation for function under cursor
+     * C-c g -> goto to definition
+     * C-c f -> find occurrencies
+     * lento a salvare per cui ho disabilitato soa in confg.. chiamare rope-analyze-modules ogni tanto!
+   * comment region M-;
+ * undo-tree ?
+ * lua ?
+ * ack ? c'e' un ack mode.. vedere bene
+ * linum-mode: show line numbering
+ * imenu ?
+ * smex ?
+ * org-mode ?
+ * mark-ring: C-u C-SPC (go to previous positions)
+
+ * git svn? mah..
+
+SSH
+#in .ssh/config (keep connections alive and reuse them)
+ControlMaster auto
+ControlPath /tmp/ssh_mux_%h_%p_%r
+ControlPersist 1h
+
+#no check dns
+CheckHostIP no
+StrictHostKeyChecking no
+  
+Host irlanda
+  HostName 192.168.5.111
+  User root
+  Port 2222
+
+#vpn via ssh (vpnay in lucaognibene)
+./sshuttle -r root@62.94.168.69 192.168.5.0/24 -vv

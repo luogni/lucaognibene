@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <EditText
+        android:id="@+id/form_add_ay_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/ay_add_name" >
+
+        <requestFocus />
+    </EditText>
+
+    <EditText
+        android:id="@+id/form_add_ay_ip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/form_add_ay_ip" />
+
+    <EditText
+        android:id="@+id/form_add_ay_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/form_add_ay_user" />
+
+    <EditText
+        android:id="@+id/form_add_ay_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/form_add_ay_password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/form_add_ay_ok"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/form_add_ay_btn" />
+
+</LinearLayout>
