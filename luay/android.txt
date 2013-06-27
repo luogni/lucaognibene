@@ -1,0 +1,3 @@
+title=LuAy
+author=Luca Ognibene
+orientation=portrait

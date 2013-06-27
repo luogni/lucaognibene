@@ -1,0 +1,14 @@
+http://android.kivy.org/
+#android
+
+cd /home/luogni/Progetti/kivy/
+source sdk.sh
+cd /home/luogni/Progetti/kivy/python-for-android/dist/default
+python build.py --dir /home/luogni/Progetti/lucaognibene/luay/ --name "LuAy" --package "org.lucaognibene.luay" --version 0.9 --orientation portrait --permission INTERNET --permission WRITE_EXTERNAL_STORAGE --compile-pyo debug installd
+
+TODO:
+ * possibilita' di aggiungere/eliminare oggetti
+ * miglior gui per oggetti
+ * aggiungere lista favoriti (lista, favorire/sfavorire oggetti)
+ * poter vedere snapshot tlc e magari eventi
+ * provare su windows

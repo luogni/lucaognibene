@@ -1,0 +1,19 @@
+import dbus, gobject
+from dbus.mainloop.glib import DBusGMainLoop
+
+def msg_cb(bus, msg):
+        args = msg.get_args_list()
+            print "Notification from '%s'" % args[0]
+                print "Summary: %s" % args[3]
+                    print "Body: %s", args[4]
+
+                    if __name__ == '__main__':
+                            DBusGMainLoop(set_as_default=True)
+                                bus = dbus.SessionBus()
+
+                                    string = "interface='org.freedesktop.Notifications',member='Notify'"
+                                        bus.add_match_string(string)
+                                            bus.add_message_filter(msg_cb)
+
+                                                mainloop = gobject.MainLoop ()
+                                                    mainloop.run ()
