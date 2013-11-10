@@ -1,0 +1,166 @@
+#:kivy 1.0
+
+<AySupport>:
+
+    Label:
+        text: root.name
+        on_touch_down: self.collide_point(*args[1].pos) and root.down()
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-10, root.center_x+root.width/2-10, root.center_y+root.height-10]
+
+<AyObjectApi>:
+    on_touch_down: self.collide_point(*args[1].pos) and root.down()
+
+    BoxLayout:
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-14, root.center_x+root.width/2-10, root.center_y+root.height-14]
+        
+        Label:
+            text: root.name
+        Label:
+            text: root.v
+            color: (0.2, 0.2, 1.0, 1)
+
+<AyObject>:
+
+    on_touch_down: self.collide_point(*args[1].pos) and root.down()
+
+    Label:
+        text: root.name
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-14, root.center_x+root.width/2-10, root.center_y+root.height-14]
+
+<AyObjectCamera>:
+
+    BoxLayout:
+        Label:
+            text: root.props['camera_status'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+        Label:
+            text: root.props['camera_ip'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+        Label:
+            text: root.props['camera_manufactor'].v + " " + root.props['camera_model'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyObjectIO>:
+
+    BoxLayout:
+        Label:
+            text: root.props['value'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyObjectVariable>:
+
+    BoxLayout:
+        Label:
+            text: root.props['value'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+        Label:
+            text: root.props['vartype'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyObjectPartition>:
+
+    BoxLayout:
+        Label:
+            text: "armed" if root.props['armed'].v == '1' else "disarmed"
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+        Label:
+            text: "alarm" if root.props['alarm.memory'].v == '1' else ""
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyObjectZone>:
+
+    BoxLayout:
+        Label:
+            text: "alarm" if root.props['alarm'].v == '1' else ""
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+        Label:
+            text: "mem.alarm" if root.props['alarm.memory'].v == '1' else ""
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyObjectAylook>:
+
+    BoxLayout:
+        Label:
+            text: root.props['ip'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+        Label:
+            text: root.props['status'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyObjectEvent>:
+    canvas:
+        Clear
+    Label:
+        text: root.props['eventts'].v
+        on_touch_down: self.collide_point(*args[1].pos) and root.down()
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-14, root.center_x+root.width/2-10, root.center_y+root.height-14]
+    BoxLayout:
+        Label:
+            text: root.props['evtype'].v
+            color: (0.2, 0.2, 1.0, 1)
+            font_size: 8
+
+<AyBack>:
+
+    Label:
+        text: "Back"
+        on_touch_down: self.collide_point(*args[1].pos) and root.down()
+        color: (0.6, 0.6, 0.6, 1)
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-14, root.center_x+root.width/2-10, root.center_y+root.height-14]
+
+<AyForward>:
+
+    Label:
+        text: "Load next"
+        on_touch_down: self.collide_point(*args[1].pos) and root.down()
+        color: (0.6, 0.6, 0.6, 1)
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-14, root.center_x+root.width/2-10, root.center_y+root.height-14]
+
+<AyAylook>:
+
+    Label:
+        text: root.name
+        on_touch_down: self.collide_point(*args[1].pos) and root.down()
+        color: (0.6, 0.6, 0.6, 1)
+        canvas:
+            Color:
+                rgb: (0.6, 0.6, 0.6)
+            Line:
+                points: [root.center_x-root.width/2+10, root.center_y+root.height-14, root.center_x+root.width/2-10, root.center_y+root.height-14]
+	
