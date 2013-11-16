@@ -6,6 +6,7 @@ import gst
 import cv2
 import numpy as np
 
+# python opencv.py "filesrc location=/home/luogni/Scaricati/1.avi ! decodebin ! videoscale ! video/x-raw-yuv,width=320,height=240 ! ffmpegcolorspace ! video/x-raw-rgb ! opencv ! ffmpegcolorspace ! xvimagesink"
 
 class OpenCV(gst.Element):
     __gstdetails__ = ('AyOpenCV', 'Transform',
