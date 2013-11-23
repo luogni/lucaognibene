@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="disegno.svg"
+   inkscape:version="0.48.3.1 r9886"
+   version="1.1"
+   id="svg2"
+   height="4251.9683"
+   width="7440.9448">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.14040556"
+     inkscape:cx="3720.4724"
+     inkscape:cy="2125.9841"
+     inkscape:document-units="cm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1215"
+     inkscape:window-height="776"
+     inkscape:window-x="65"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     units="cm" />
+  <defs
+     id="defs4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(0,3199.6071)"
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Livello 1">
+    <path
+       d="m 3248.9219,-2600.1535 635.6585,-30.2694 m -1846.4368,877.8143 -615.479,-443.9521 m -60.5389,756.7365 -877.81435,-565.0299 m 2512.36505,343.0538 -565.0299,736.55677 -383.4131,-343.05377 m 1967.5147,-988.8023 534.7604,-524.6706 m -322.8742,1220.8681 -443.9521,-1372.2154 m 2451.8262,938.3532 c 443.952,-131.1677 443.952,-131.1677 443.952,-131.1677 m -554.94,433.8623 -887.9042,-645.7485 M 5842.0054,-915.15363 6306.1371,-2236.92 M 6316.2269,457.06177 6699.64,23.199474 M 7405.9274,1012.0019 5862.1851,-925.24347 4227.6343,-1540.7224 2038.1436,-1752.6086 343.05385,-935.33333"
+       style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       id="path3005" />
+    <text
+       id="text3696"
+       y="0"
+       x="0">
+      <textPath
+         id="textPath3698"
+         dy="-6.0"
+         startOffset="50%"
+         xlink:href="#path3005"
+         style="font-size:30;vertical-align:bottom;fill-opacity:1.0;font-style:normal;fill:#000000;font-weight:normal;stroke:none;text-anchor:middle;text-align:center">505,72 cm</textPath>
+    </text>
+  </g>
+</svg>
