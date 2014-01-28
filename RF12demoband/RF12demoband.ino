@@ -23,6 +23,8 @@ static unsigned long now () {
     return millis() / 1000;
 }
 
+//#define RF12_SLOW
+
 static void activityLed (byte on) {
     pinMode(LED_PIN, OUTPUT);
     digitalWrite(LED_PIN, !on);
@@ -88,7 +90,9 @@ static void saveConfig () {
     
     if (!rf12_config())
         Serial.println("config save failed");
+#ifdef RF12_SLOW
     rf12_control(0xC647);
+#endif
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -549,7 +553,9 @@ static void showHelp () {
         showString(helpText2);
     Serial.println("Current configuration:");
     rf12_config();
+#ifdef RF12_SLOW
     rf12_control(0xC647);
+#endif
 }
 
 static void handleInput (char c) {
@@ -666,7 +672,9 @@ void setup() {
         config.group = 0xD4;
         saveConfig();
     }
+#ifdef RF12_SLOW
     rf12_control(0xC647);
+#endif
 
     df_initialize();
     

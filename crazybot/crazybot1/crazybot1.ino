@@ -1,10 +1,12 @@
 #include <JeeLib.h>
 
-Port one (1);
+Port one (3);
 Port two (2);
-static byte myNodeID = 50;
-unsigned byte one_value = 0;
-unsigned byte two_value = 0;
+static byte myNodeID = 20;
+byte one_value = 0;
+byte two_value = 0;
+
+//#define DEBUG
 
 void setup() {
   one.mode(OUTPUT);
@@ -13,9 +15,13 @@ void setup() {
   two.anaWrite(two_value);
   rf12_initialize(myNodeID, RF12_868MHZ);
   //rf12_control(0xC647);
+#ifdef DEBUG
+  Serial.begin(57600);
+  Serial.println("\n[crazybot]");
+#endif
 }
 
-void parse_cmd(byte dlen, byte *ddata) {
+byte parse_cmd(byte dlen, byte *ddata) {
   if ((dlen == 4)&&(ddata[1] == 'M')) {
     one_value = ddata[2];
     two_value = ddata[3];
@@ -25,11 +31,15 @@ void parse_cmd(byte dlen, byte *ddata) {
 }
 
 // C M ONEVALUE TWOVALUE   (67 77 ascii)
-void try_to_receive_cmd() {
+byte try_to_receive_cmd() {
   unsigned long t;
   //if there's something and it's for me
   if (rf12_recvDone() && rf12_crc == 0) {
     if (((RF12_HDR_MASK & rf12_hdr) == myNodeID)) {
+#ifdef DEBUG
+        Serial.print("cmd"); Serial.print(" "); Serial.print((int)rf12_len); Serial.print(" "); Serial.println(rf12_data[0]);
+        delay(10);
+#endif
       if (rf12_len >= 2) {
         if (rf12_data[0] == 'C')
           return parse_cmd(rf12_len, (byte *)rf12_data);

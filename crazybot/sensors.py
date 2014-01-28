@@ -1,8 +1,9 @@
 import socket
+import serial
 
 host = ''
 port = 5555
-
+DEVICE = "/dev/ttyUSB0"
 TPOWER = 60
 TTURN = 40
 m0 = 0
@@ -12,6 +13,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 #s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind((host, port))
+serial = serial.Serial(DEVICE, 57600)
 
 while 1:
     message, address = s.recvfrom(8192)
@@ -30,3 +32,4 @@ while 1:
             elif turn > 0:
                 m0 *= (1 - turn)
             print int(m0), int(m1)
+            serial.write('67,77,%d,%d,20 s' % (int(m0), int(m1)))
