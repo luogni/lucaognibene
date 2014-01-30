@@ -5,6 +5,7 @@ Port two (2);
 static byte myNodeID = 20;
 byte one_value = 0;
 byte two_value = 0;
+byte reverse = 0;
 
 //#define DEBUG
 
@@ -22,9 +23,10 @@ void setup() {
 }
 
 byte parse_cmd(byte dlen, byte *ddata) {
-  if ((dlen == 4)&&(ddata[1] == 'M')) {
+  if ((dlen == 5)&&(ddata[1] == 'M')) {
     one_value = ddata[2];
     two_value = ddata[3];
+    reverse = ddata[4];
     return 1;
   }
   return 0;

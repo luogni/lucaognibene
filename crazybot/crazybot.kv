@@ -1,19 +1,29 @@
 #:kivy 1.0.9
 
 <CrazyBotGame>:    
-    canvas:
-        Rectangle:
-            pos: self.center_x - 5, 0
-            size: 10, self.height
-            
-    Label:
-        font_size: 40  
-        center_x: root.width / 4
-        top: root.top - 50
-        text: str(root.orient1)
-        
-    Label:
-        font_size: 40  
-        center_x: root.width * 3 / 4
-        top: root.top - 50
-        text: str(root.orient2)
+
+   Label:
+      font_size: 40  
+      center_x: root.width / 4
+      top: root.top - 50
+      text: str(root.orient1)
+
+   Label:
+      font_size: 40  
+      center_x: root.width * 3 / 4
+      top: root.top - 50
+      text: str(root.orient2)
+
+   Label:
+      font_size: 40  
+      center_x: root.width * 3 / 4
+      top: root.top - 150
+      text: str(root.reverse)
+
+   Button:
+      font_size: 20
+      center_x: root.width / 4
+      top: root.top - 150
+      text: "reverse"
+      on_press: root.reverse = 1
+      on_release: root.reverse = 0

@@ -2,24 +2,38 @@ from kivy.app import App
 from kivy.uix.widget import Widget
 from kivy.clock import Clock
 from kivy.properties import NumericProperty
-from jnius import autoclass
+import socket
+try:
+    from jnius import autoclass
+    Hardware = autoclass('org.renpy.android.Hardware')
+except:
+    print "Disable hardware support"
+    Hardware = None
 
 
 __version__ = '0.1'
-Hardware = autoclass('org.renpy.android.Hardware')
+
+
+UDP_IP = "192.168.1.3"
+UDP_PORT = 5555
 
 
 class CrazyBotGame(Widget):
 
     orient1 = NumericProperty(0)
     orient2 = NumericProperty(0)
+    reverse = NumericProperty(0)
+
+    def send_data(self):
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.sendto("cr,%d,%d,%d" % (self.orient1, self.orient2, self.reverse), (UDP_IP, UDP_PORT))        
 
     def update(self, dt):
-        print "update"
-        values = Hardware.orientationSensorReading()
-        print values
-        self.orient1 = int(values[1])
-        self.orient2 = int(values[2])
+        if Hardware is not None:
+            values = Hardware.orientationSensorReading()
+            self.orient1 = int(values[1])
+            self.orient2 = int(values[2])
+        self.send_data()
 
 
 class CrazyBotApp(App):
@@ -29,10 +43,12 @@ class CrazyBotApp(App):
         return game
 
     def on_stop(self):
-        Hardware.orientationSensorEnable(False)
+        if Hardware is not None:
+            Hardware.orientationSensorEnable(False)
 
     def on_start(self):
-        Hardware.orientationSensorEnable(True)
+        if Hardware is not None:
+            Hardware.orientationSensorEnable(True)
 
 
 if __name__ == '__main__':
