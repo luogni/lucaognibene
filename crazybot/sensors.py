@@ -1,9 +1,10 @@
 import socket
 import serial
+import sys
 
 host = ''
 port = 5555
-DEVICE = "/dev/ttyUSB0"
+DEVICE = sys.argv[1]
 TPOWER = 60
 TTURN = 40
 m0 = 0
