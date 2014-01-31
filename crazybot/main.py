@@ -14,7 +14,7 @@ except:
 __version__ = '0.1'
 
 
-UDP_IP = "192.168.1.3"
+UDP_IP = "192.168.1.255"
 UDP_PORT = 5555
 
 
@@ -26,6 +26,7 @@ class CrazyBotGame(Widget):
 
     def send_data(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         sock.sendto("cr,%d,%d,%d" % (self.orient1, self.orient2, self.reverse), (UDP_IP, UDP_PORT))        
 
     def update(self, dt):
