@@ -1,19 +1,22 @@
 #include <JeeLib.h>
 
+Port reverse (1);
 Port one (3);
 Port two (2);
 static byte myNodeID = 20;
 byte one_value = 0;
 byte two_value = 0;
-byte reverse = 0;
+byte reverse_value = 0;
 
 //#define DEBUG
 
 void setup() {
+  reverse.mode(OUTPUT);
   one.mode(OUTPUT);
   two.mode(OUTPUT);
   one.anaWrite(one_value);
   two.anaWrite(two_value);
+  reverse.digiWrite(reverse_value);
   rf12_initialize(myNodeID, RF12_868MHZ);
   //rf12_control(0xC647);
 #ifdef DEBUG
@@ -26,7 +29,7 @@ byte parse_cmd(byte dlen, byte *ddata) {
   if ((dlen == 5)&&(ddata[1] == 'M')) {
     one_value = ddata[2];
     two_value = ddata[3];
-    reverse = ddata[4];
+    reverse_value = ddata[4];
     return 1;
   }
   return 0;
@@ -60,5 +63,6 @@ void loop() {
   if (change > 0) {
     one.anaWrite(one_value);
     two.anaWrite(two_value);
+    reverse.digiWrite(reverse_value);
   }
 }

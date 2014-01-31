@@ -34,4 +34,4 @@ while 1:
         m0 *= (1 - turn)
     print int(m0), int(m1), r
     if ser is not None:
-        ser.write('67,77,%d,%d,%d,20 s' % (int(m0), int(m1), int(r)))
+        ser.write('67,77,%d,%d,%d,20 s' % (int(m0), int(m1), 1 - int(r)))
