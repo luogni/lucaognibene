@@ -15,7 +15,13 @@ void setup() {
   strip.begin();
 
   // Update the strip, to start they are all 'off'
-  strip.show();
+  
+  int i = 255;
+    strip.setPixelColor(30, strip.Color(i, 0, 0));
+    strip.setPixelColor(31, strip.Color(i, 0, 0));
+    strip.setPixelColor(32, strip.Color(0, i, 0));
+    strip.setPixelColor(33, strip.Color(0, i, 0));
+    strip.show();
 }
 
 // function prototypes, do not remove these!
@@ -37,18 +43,6 @@ void loop() {
   //colorChase(strip.Color(0,127,127), 20);   // cyan
   //colorChase(strip.Color(0,0,127), 20);     // blue
   //colorChase(strip.Color(0,0,127), 500);   // magenta
-
-  for (int i=0; i < 255; i++) {
-    strip.setPixelColor(30, strip.Color(i, 0, 0));
-    strip.setPixelColor(31, strip.Color(i, i, i));
-    strip.show();
-    delay(20);
-  }
-
-  // Clear strip data before start of next effect
-  for (int i=0; i < strip.numPixels(); i++) {
-    strip.setPixelColor(i, 0);
-  }
 }
 
 // Chase a dot down the strip
