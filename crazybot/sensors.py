@@ -5,14 +5,13 @@ import time
 
 host = ''
 port = 5555
-DEVICE = sys.argv[1]
 TPOWER = 60
 TTURN = 40
 m0 = 0
 m1 = 0
 
 try:
-    MODE = sys.argv[2]
+    MODE = sys.argv[1]
 except:
     MODE = "proxy"
 
@@ -20,11 +19,17 @@ s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind((host, port))
-try:
-    ser = serial.Serial(DEVICE, 57600)
-except:
-    print "Can't open serial device"
-    ser = None
+
+def open_serial():
+    for i in range(0, 10):
+        d = "/dev/ttyUSB%d" % i
+        try:
+            ser = serial.Serial(d, 57600)
+            print "Using", d
+            return ser
+        except:
+            continue
+    return None
 
 def send(m0, m1, r, sl=0, repeat=1):
     
@@ -38,6 +43,8 @@ def send(m0, m1, r, sl=0, repeat=1):
 # m0 = m1 = 255
 # r = 0
 # ser.write('67,77,%d,%d,%d,20 s' % (int(m0), int(m1), 1 - int(r)))
+
+ser = open_serial()
 
 ser.write('8 b')
 time.sleep(1)
