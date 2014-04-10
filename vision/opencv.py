@@ -58,7 +58,7 @@ class OpenCV(gst.Element):
         w = c[0]['width']
         h = c[0]['height']
         img = np.frombuffer(buffer.data, dtype=np.uint8)
-        img = img.reshape((w, h, 3))
+        img = img.reshape((h, w, 3))
         #img = self.face(img)
         img = self.bkg(img)
         b2 = gst.Buffer(img.tostring())
