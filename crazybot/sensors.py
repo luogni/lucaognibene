@@ -26,6 +26,8 @@ def open_serial():
         try:
             ser = serial.Serial(d, 57600)
             print "Using", d
+            ser.write('8 b')
+            time.sleep(1)
             return ser
         except:
             continue
@@ -45,9 +47,6 @@ def send(m0, m1, r, sl=0, repeat=1):
 # ser.write('67,77,%d,%d,%d,20 s' % (int(m0), int(m1), 1 - int(r)))
 
 ser = open_serial()
-
-ser.write('8 b')
-time.sleep(1)
 
 if MODE == "test-forward":
     send(255, 255, 0, 1, 10)

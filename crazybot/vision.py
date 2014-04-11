@@ -5,8 +5,46 @@ pygst.require("0.10")
 import gst
 import cv2
 import numpy as np
+import socket
+import serial
+import sys
+import time
+import math
 
-# python vision.py "filesrc location=/home/luogni/Scaricati/1.avi ! decodebin ! videoscale ! video/x-raw-yuv,width=320,height=240 ! ffmpegcolorspace ! video/x-raw-rgb ! opencv ! ffmpegcolorspace ! xvimagesink"
+
+TPOWER = 60
+TTURN = 40
+
+
+def open_serial():
+    for i in range(0, 10):
+        d = "/dev/ttyUSB%d" % i
+        try:
+            ser = serial.Serial(d, 57600)
+            print "Using", d
+            ser.write('8 b')
+            time.sleep(1)
+            return ser
+        except:
+            continue
+    return None
+
+
+def send_serial(m0, m1, r, sl=0, repeat=1):
+    global SER
+    rr = repeat
+    if not SER:
+        return
+    while rr > 0:
+        SER.write('67,77,%d,%d,%d,20 s' % (int(m0), int(m1), int(r)))
+        if sl > 0:
+            time.sleep(sl)
+        rr -= 1
+
+SER = open_serial()
+TEST = False
+
+#python vision.py "rtspsrc location=rtsp://192.168.1.51:554/live2.sdp ! rtph264depay ! decodebin ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink"
 
 class OpenCV(gst.Element):
     __gstdetails__ = ('CrazyOpenCV', 'Transform',
@@ -36,10 +74,12 @@ class OpenCV(gst.Element):
 
         self.targetx = 0
         self.targety = 0
-        self.tx = 0
-        self.ty = 0
         self.tspeed = 50
         self.lasttimestamp = 0
+        self.bx = 0
+        self.by = 0
+        self.lbx = self.bx
+        self.lby = self.by
 
     def test_move_bot(self, ts):
         if (self.lasttimestamp == 0):
@@ -48,25 +88,82 @@ class OpenCV(gst.Element):
         dts = float(ts - self.lasttimestamp) / gst.SECOND
         self.lasttimestamp = ts
         mx = my = int(dts * self.tspeed)
-        if self.targetx < self.tx:
+        if self.targetx < self.bx:
             mx *= -1
-        if self.targety < self.ty:
+        if self.targety < self.by:
             my *= -1
-        self.tx += mx
-        self.ty += my
+        (self.lbx, self.lby) = (self.bx, self.by)
+        self.bx += mx
+        self.by += my
+
+    # find the angle between these points(central and target)
+    # 0 is pointing north, 90 east and so on
+    def find_angle(self, vx, vy, tx, ty):
+        #Slope
+        dx = vx - tx
+        dy = vy - ty
+        if tx >= vx and ty <= vy:
+            rads = math.atan2(dy,dx)
+            degs = math.degrees(rads)
+            degs = degs - 90
+        elif tx >= vx and ty >= vy:
+            rads = math.atan2(dx,dy)
+            degs = math.degrees(rads)
+            degs = (degs * -1)
+        elif tx <= vx and ty >= vy:
+            rads = math.atan2(dx,-dy)
+            degs = math.degrees(rads)
+            degs = degs + 180
+        elif tx <= vx and ty <= vy:
+            rads = math.atan2(dx,-dy)
+            degs = math.degrees(rads) + 180
+        return (rads, degs)
+
+    def find_target_angle(self):
+        (rads, degs) = self.find_angle(self.bx, self.by, self.targetx, self.targety)
+        return degs
+
+    def find_bot_angle(self):
+        # FIXME: maybe add a compass sensor to the bot.. or another color..
+        (rads, degs) = self.find_angle(self.lbx, self.lby, self.bx, self.by)
+        return degs
+            
+    def move_bot(self):
+        # FIXME: check for blocked bot
+        # FIXME: check for bot battery level
+        # FIXME: know bot direction (based on last movement)
+        m0 = m1 = self.tspeed
+        r = 0
+        sp = 80
+        tdeg = self.find_target_angle()
+        bdeg = self.find_bot_angle()
+        mdeg = bdeg - tdeg
+        if ((mdeg > 0)and(mdeg < 180))or(mdeg < -180):
+            # turn right
+            m1 *= 0.3
+        else:
+            # turn left
+            m0 *= 0.3
+        print tdeg, bdeg, tdeg - bdeg, m0, m1
+        send_serial(m0, m1, 0)
 
     def next_target(self):
-        self.passgrid[self.tx / self.gw][self.ty / self.gh] += 1
+        try:
+            self.passgrid[self.bx / self.gw][self.by / self.gh] += 1
+        except:
+            return
         m = self.passgrid.argmin()
         m = np.unravel_index(m, self.passgrid.shape)
         self.targetx = m[0] * self.gw + self.gw/2
         self.targety = m[1] * self.gh + self.gh/2
-        print m[0], m[1], self.targetx
 
     def find_bot(self, frame):
         frame2 = cv2.blur(frame,(3,3))
         hsv = cv2.cvtColor(frame2, cv2.COLOR_RGB2HSV)
-        mask = cv2.inRange(hsv, np.array([60,40,40], dtype=np.uint8), np.array([75,255,255], dtype=np.uint8))
+        # mask = cv2.inRange(hsv, np.array([60,40,40], dtype=np.uint8), np.array([75,255,255], dtype=np.uint8))
+        mask1 = cv2.inRange(hsv, np.array([0,135,135], dtype=np.uint8), np.array([20,255,255], dtype=np.uint8))
+        mask2 = cv2.inRange(hsv, np.array([159,135,135], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
+        mask = mask1 | mask2
         # find contours in the threshold image
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         # finding contour with maximum area and store it as best_cnt
@@ -80,13 +177,13 @@ class OpenCV(gst.Element):
         if self.refframe_vision is False:
             self.dorefframe_vision(frame)
             self.refframe_vision = True
-        if best_cnt is not None:
+        if (best_cnt is not None)and(not TEST):
             # finding centroids of best_cnt and draw a circle there
             M = cv2.moments(best_cnt)
-            cx, cy = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
-            #cv2.circle(frame, (cx,cy), 5, 255, -1)
+            (self.lbx, self.lby) = (self.bx, self.by)
+            self.bx, self.by = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
             #print self.distance[cx][cy]
-        cv2.circle(frame, (self.tx, self.ty), 2, (255, 0, 0), -1)
+        cv2.circle(frame, (self.bx, self.by), 2, (255, 0, 0), -1)
         cv2.circle(frame, (self.targetx, self.targety), 2, (0, 255, 0), -1)
         cv2.polylines(frame, self.poly, True, [0, 255, 0])
         return frame
@@ -121,7 +218,9 @@ class OpenCV(gst.Element):
         if self.refframe_stream is False:
             self.dorefframe_stream(buffer)
             self.refframe_stream = True
-        self.test_move_bot(buffer.timestamp)
+        if TEST:
+            self.test_move_bot(buffer.timestamp)
+        self.move_bot()
         img = np.frombuffer(buffer.data, dtype=np.uint8)
         img = img.reshape((self.h, self.w, 3))
         img = self.find_bot(img)
@@ -164,4 +263,4 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         pass
     bin.set_state(gst.STATE_NULL)
-        
+    send_serial(0, 0, 0, 0.2, 5)
