@@ -1,6 +1,13 @@
 #include <JeeLib.h>
 
-Port reverse (1);
+PortI2C eport (4);
+DeviceI2C expander (eport, 0x20); // also works with output plug if 0x26/0x27
+
+enum {
+  MCP_IODIR, MCP_IPOL, MCP_GPINTEN, MCP_DEFVAL, MCP_INTCON, MCP_IOCON,
+  MCP_GPPU, MCP_INTF, MCP_INTCAP, MCP_GPIO, MCP_OLAT
+};
+
 Port one (3);
 Port two (2);
 static byte myNodeID = 20;
@@ -8,33 +15,38 @@ byte one_value = 0;
 byte two_value = 0;
 byte reverse_value = 0;
 
-int startBit   = 2000;   // This pulse sets the threshold for a transmission start bit
-int senderPin  = 7;      // Infrared LED on Pin 3
-int waitTime = 300;     // The amount of time to wait between pulses
-int endBit     = 3000;  // This pulse sets the threshold for an end bit
-int vOne        = 1000;   // This pulse sets the threshold for a transmission that 
-                         // represents a 1
-int vZero       = 400;    // This pulse sets the threshold for a transmission that 
-                         // represents a 0
-unsigned long time;
+#define EP_REVERSE1 0
+#define EP_REVERSE2 1
 
 //#define DEBUG
 
+
+static void exp_setup () {
+    expander.send();
+    expander.write(MCP_IODIR);
+    expander.write(0); // all outputs
+    expander.stop();
+}
+
+static void exp_write (byte value) {
+    expander.send();
+    expander.write(MCP_GPIO);
+    expander.write(value);
+    expander.stop();
+}
+
 void setup() {
-  reverse.mode(OUTPUT);
   one.mode(OUTPUT);
   two.mode(OUTPUT);
   one.anaWrite(one_value);
   two.anaWrite(two_value);
-  reverse.digiWrite(reverse_value);
+  exp_setup();
   rf12_initialize(myNodeID, RF12_868MHZ);
   //rf12_control(0xC647);
 #ifdef DEBUG
   Serial.begin(57600);
   Serial.println("\n[crazybot]");
 #endif
-  pinMode(senderPin, OUTPUT);
-  time = 0;
 }
 
 byte parse_cmd(byte dlen, byte *ddata) {
@@ -69,53 +81,12 @@ byte try_to_receive_cmd() {
   }
 }
 
-void fireShot(int player, int level) {
-  Serial.println("fire!");
-  int encoded[8];
-  for (int i=0; i<4; i++) {
-    encoded[i] = bitRead(player, i);
-  }
-  for (int i=4; i<8; i++) {
-    encoded[i] = bitRead(level, i - 4);
-  }
-  // send startbit
-  oscillationWrite(senderPin, startBit);
-  // send separation bit
-  digitalWrite(senderPin, HIGH);
-  delayMicroseconds(waitTime);
-  // send the whole string of data
-  for (int i=7; i>=0; i--) {
-    if (encoded[i] == 0) {
-      oscillationWrite(senderPin, vZero);
-    } else {
-      oscillationWrite(senderPin, vOne);
-    }
-    // send separation bit
-    digitalWrite(senderPin, HIGH);
-    delayMicroseconds(waitTime);
-  }
-  oscillationWrite(senderPin, endBit);
-}
-
-void oscillationWrite(int pin, int time) {
-  for(int i = 0; i <= time/26; i++) {
-    digitalWrite(pin, HIGH);
-    delayMicroseconds(13);
-    digitalWrite(pin, LOW);
-    delayMicroseconds(13);
-  }
-}
-
 void loop() {
   int change = 0;
   change = try_to_receive_cmd(); 
   if (change > 0) {
     one.anaWrite(one_value);
     two.anaWrite(two_value);
-    reverse.digiWrite(reverse_value);
-  }
-  if (millis() - time > 1000) {
-     time = millis();
-     fireShot(3, 7); 
+    exp_write((reverse_value << EP_REVERSE1) | (reverse_value << EP_REVERSE2));
   }
 }

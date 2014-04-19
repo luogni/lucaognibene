@@ -45,6 +45,8 @@ SER = open_serial()
 TEST = False
 
 #python vision.py "rtspsrc location=rtsp://192.168.1.51:554/live2.sdp ! rtph264depay ! decodebin ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink"
+#python vision.py "rtspsrc protocols=tcp location=rtsp://192.168.1.51:554/live2.sdp latency=200 ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink"
+
 
 class OpenCV(gst.Element):
     __gstdetails__ = ('CrazyOpenCV', 'Transform',
@@ -131,19 +133,18 @@ class OpenCV(gst.Element):
     def move_bot(self):
         # FIXME: check for blocked bot
         # FIXME: check for bot battery level
-        # FIXME: know bot direction (based on last movement)
+        # FIXME: check for reverse
         m0 = m1 = self.tspeed
         r = 0
-        sp = 80
         tdeg = self.find_target_angle()
         bdeg = self.find_bot_angle()
         mdeg = bdeg - tdeg
         if ((mdeg > 0)and(mdeg < 180))or(mdeg < -180):
             # turn right
-            m1 *= 0.3
+            m1 = 0
         else:
             # turn left
-            m0 *= 0.3
+            m0 = 0
         print tdeg, bdeg, tdeg - bdeg, m0, m1
         send_serial(m0, m1, 0)
 
@@ -161,7 +162,7 @@ class OpenCV(gst.Element):
         frame2 = cv2.blur(frame,(3,3))
         hsv = cv2.cvtColor(frame2, cv2.COLOR_RGB2HSV)
         # mask = cv2.inRange(hsv, np.array([60,40,40], dtype=np.uint8), np.array([75,255,255], dtype=np.uint8))
-        mask1 = cv2.inRange(hsv, np.array([0,135,135], dtype=np.uint8), np.array([20,255,255], dtype=np.uint8))
+        mask1 = cv2.inRange(hsv, np.array([0,135,135], dtype=np.uint8), np.array([15,255,255], dtype=np.uint8))
         mask2 = cv2.inRange(hsv, np.array([159,135,135], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
         mask = mask1 | mask2
         # find contours in the threshold image
@@ -206,9 +207,12 @@ class OpenCV(gst.Element):
                 gx = x / self.gw
                 gy = y / self.gh
                 dist = cv2.pointPolygonTest(self.poly, (x, y), True)
+                # add robot border
+                dist -= 40
                 self.distance[x][y] = dist
                 if dist > 0:
-                    self.distgrid[gx][gy] += dist
+                    # get max and not min because min(0, >0) always 0
+                    self.distgrid[gx][gy] = max(self.distgrid[gx][gy], dist)
                 else:
                     self.distgrid[gx][gy] = -1  # grid with border or outside
                     self.passgrid[gx][gy] = np.inf

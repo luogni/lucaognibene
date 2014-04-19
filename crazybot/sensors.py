@@ -26,6 +26,7 @@ def open_serial():
         try:
             ser = serial.Serial(d, 57600)
             print "Using", d
+            print ser.read()
             ser.write('8 b')
             time.sleep(1)
             return ser
@@ -51,7 +52,10 @@ ser = open_serial()
 if MODE == "test-forward":
     send(255, 255, 0, 1, 10)
 elif MODE == "test-forward-1":
-    send(100, 100, 0, 1, 10)
+    send(130, 130, 0, 1, 10)
+elif MODE == "test-reverse-1":
+    send(130, 130, 0, 1, 3)
+    send(130, 130, 1, 1, 3)
 elif MODE == "test-stop":
     send(0, 0, 0, 1, 10)
 else:
