@@ -9,6 +9,8 @@ TPOWER = 60
 TTURN = 40
 m0 = 0
 m1 = 0
+lastr = 0
+lasts = 0
 
 try:
     MODE = sys.argv[1]
@@ -62,7 +64,15 @@ else:
     while 1:
         message, address = s.recvfrom(8192)
         (ts, y, z, r) = [m.strip() for m in message.split(',')]
-        print ts, y, z, r
+        #print ts, y, z, r
+        if (time.time() > lastr + 2)and(lastr > 0):
+            print "restart comm"
+            lasts = 0
+        lastr = time.time()
+        if (lasts == 0):
+            lasts = lastr
+        if (lastr < lasts + 2):
+            continue
         power = int(max(0, min(TPOWER - float(z), TPOWER)) * (255.0 / TPOWER))  # 0  255
         turn = -1 * max(-TTURN, min(float(y), TTURN)) / float(TTURN)  # -1  +1
         m0 = power
@@ -71,6 +81,8 @@ else:
             m1 *= (1 + turn)
         elif turn > 0:
             m0 *= (1 - turn)
-        if ser is not None:
-            print int(m0), int(m1), r
-            send(m0, m1, r)
+        if (ser is not None):
+            # swap or not based on how i mounted them..
+            print int(m1), int(m0), r
+            lasth = time.time()
+            send(m1, m0, r)
