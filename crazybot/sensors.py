@@ -83,6 +83,6 @@ else:
             m0 *= (1 - turn)
         if (ser is not None):
             # swap or not based on how i mounted them..
-            print int(m1), int(m0), r
+            print int(m0), int(m1), r
             lasth = time.time()
-            send(m1, m0, r)
+            send(m0, m1, r)
