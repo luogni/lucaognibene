@@ -5,7 +5,6 @@ pygst.require("0.10")
 import gst
 import cv2
 import numpy as np
-import socket
 import serial
 import sys
 import time
@@ -46,7 +45,7 @@ TEST = False
 
 #python vision.py "rtspsrc location=rtsp://192.168.1.51:554/live2.sdp ! rtph264depay ! decodebin ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink"
 #python vision.py "rtspsrc protocols=tcp location=rtsp://192.168.1.51:554/live2.sdp latency=200 ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink"
-
+#python vision.py "souphttpsrc location=http://192.168.1.50:81/search?camera_id=22984&caps=video/aylook,profile=max&time_start=20140515172800&time_end=99999999999999&autoseek=&user=admin&hash=c8e3bef8a9f70725bbc6045a8f7aed4e&uuid=0340&aylook=0&autoplay=true ! gdpdepay ! ffdec_mpeg4 ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink sync=false"
 
 class OpenCV(gst.Element):
     __gstdetails__ = ('CrazyOpenCV', 'Transform',
@@ -72,14 +71,15 @@ class OpenCV(gst.Element):
         self.add_pad(self.srcpad)
         self.refframe_stream = False
         self.refframe_vision = False
-        self.poly = np.array([[[280, 280], [380, 300], [380, 470], [100, 470]]])
+        #self.poly = np.array([[[280, 280], [380, 300], [380, 470], [100, 470]]])
+        self.poly = np.array([[[280, 280], [300, 300], [100, 100], [100, 270]]])
 
         self.targetx = 0
         self.targety = 0
         self.tspeed = 50
         self.lasttimestamp = 0
-        self.bx = 0
-        self.by = 0
+        self.bx = -1
+        self.by = -1
         self.lbx = self.bx
         self.lby = self.by
 
@@ -105,19 +105,19 @@ class OpenCV(gst.Element):
         dx = vx - tx
         dy = vy - ty
         if tx >= vx and ty <= vy:
-            rads = math.atan2(dy,dx)
+            rads = math.atan2(dy, dx)
             degs = math.degrees(rads)
             degs = degs - 90
         elif tx >= vx and ty >= vy:
-            rads = math.atan2(dx,dy)
+            rads = math.atan2(dx, dy)
             degs = math.degrees(rads)
             degs = (degs * -1)
         elif tx <= vx and ty >= vy:
-            rads = math.atan2(dx,-dy)
+            rads = math.atan2(dx, -dy)
             degs = math.degrees(rads)
             degs = degs + 180
         elif tx <= vx and ty <= vy:
-            rads = math.atan2(dx,-dy)
+            rads = math.atan2(dx, -dy)
             degs = math.degrees(rads) + 180
         return (rads, degs)
 
@@ -145,7 +145,7 @@ class OpenCV(gst.Element):
         else:
             # turn left
             m0 = 0
-        print tdeg, bdeg, tdeg - bdeg, m0, m1
+        # print tdeg, bdeg, tdeg - bdeg, m0, m1
         send_serial(m0, m1, 0)
 
     def next_target(self):
@@ -159,22 +159,46 @@ class OpenCV(gst.Element):
         self.targety = m[1] * self.gh + self.gh/2
 
     def find_bot(self, frame):
-        frame2 = cv2.blur(frame,(3,3))
+        # FIXME:
+        #  - use multiple methods and get probability for each position
+        #  - bigger area (or similar to last)
+        #  - distance from last
+        #  - motion
+        #  - last position, speed and direction get "wannabe" current position
+        #  - get a probability for each possibility and select max
+        frame2 = cv2.blur(frame, (3, 3))
         hsv = cv2.cvtColor(frame2, cv2.COLOR_RGB2HSV)
-        # mask = cv2.inRange(hsv, np.array([60,40,40], dtype=np.uint8), np.array([75,255,255], dtype=np.uint8))
-        mask1 = cv2.inRange(hsv, np.array([0,135,135], dtype=np.uint8), np.array([15,255,255], dtype=np.uint8))
-        mask2 = cv2.inRange(hsv, np.array([159,135,135], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
+        #mask = cv2.inRange(hsv, np.array([60,40,40], dtype=np.uint8), np.array([75,255,255], dtype=np.uint8))
+        #mask1 = cv2.inRange(hsv, np.array([0,135,135], dtype=np.uint8), np.array([15,255,255], dtype=np.uint8))
+        #mask2 = cv2.inRange(hsv, np.array([159,135,135], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
+        mask1 = cv2.inRange(hsv, np.array([0,40,40], dtype=np.uint8), np.array([15,255,255], dtype=np.uint8))
+        mask2 = cv2.inRange(hsv, np.array([159,40,40], dtype=np.uint8), np.array([179,255,255], dtype=np.uint8))
         mask = mask1 | mask2
         # find contours in the threshold image
         contours, hierarchy = cv2.findContours(mask, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
         # finding contour with maximum area and store it as best_cnt
-        max_area = 0
         best_cnt = None
-        for cnt in contours:
-            area = cv2.contourArea(cnt)
-            if area > max_area:
-                max_area = area
-                best_cnt = cnt
+        if (self.bx < 0):
+            max_area = 0
+            for cnt in contours:
+                area = cv2.contourArea(cnt)
+                if area > max_area:
+                    max_area = area
+                    best_cnt = cnt
+        else:
+            maxdist = -1
+            for cnt in contours:
+                M = cv2.moments(cnt)
+                if M['m00'] == 0:
+                    continue
+                bx, by = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
+                print "1", bx, by, self.bx, self.by
+                d = np.linalg.norm(np.array((bx, by)) - np.array((self.bx, self.by)))
+                print "2", d
+                if (d < maxdist)or(maxdist < 0):
+                    maxdist = d
+                    best_cnt = cnt
+            print "go", maxdist
         if self.refframe_vision is False:
             self.dorefframe_vision(frame)
             self.refframe_vision = True
@@ -182,8 +206,7 @@ class OpenCV(gst.Element):
             # finding centroids of best_cnt and draw a circle there
             M = cv2.moments(best_cnt)
             (self.lbx, self.lby) = (self.bx, self.by)
-            self.bx, self.by = int(M['m10']/M['m00']), int(M['m01']/M['m00'])
-            #print self.distance[cx][cy]
+            self.bx, self.by = int(M['m10'] / M['m00']), int(M['m01'] / M['m00'])
         cv2.circle(frame, (self.bx, self.by), 2, (255, 0, 0), -1)
         cv2.circle(frame, (self.targetx, self.targety), 2, (0, 255, 0), -1)
         cv2.polylines(frame, self.poly, True, [0, 255, 0])
@@ -195,8 +218,8 @@ class OpenCV(gst.Element):
         self.h = c[0]['height']
 
     def dorefframe_vision(self, frame):
-        self.gw = 20
-        self.gh = 20
+        self.gw = 16
+        self.gh = 16
         self.ngw = self.w / self.gw
         self.ngh = self.h / self.gh
         self.distance = np.empty([self.w, self.h])
