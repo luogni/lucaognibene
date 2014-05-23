@@ -1,0 +1,30 @@
+KISS
+
+== Goals ==
+ * seed
+ * temperature/humidity sensors
+ * video coverage (?)
+
+
+== TODO ==
+=== ROVER ===
+ * voltage monitor > 6.4v total 2s
+ * ping every s or so with data
+ * assemble and try seed-tyres
+ * find threadlock and use it (frenafiletti). Or try with nail polish.
+
+=== APP MANUAL ===
+ * always active
+ * display if cbo is active(ping less than X seconds ago)
+ * display cbo voltage/data
+
+=== PROXY/SENSORS ===
+ * think about a protocol so i can proxy data from APP to CBO and viceversa
+
+=== APP AUTOMATIC ===
+ * display live video (current jpeg for example is ok)
+
+=== CBO BRAIN ===
+ * process structure (gevent, vision, brain, ...)
+ * api (video snapshot, cbo status)
+ * vision. maybe keep it out-of-process and make it send data to main process.

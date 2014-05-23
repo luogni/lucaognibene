@@ -47,6 +47,7 @@ TEST = False
 #python vision.py "rtspsrc protocols=tcp location=rtsp://192.168.1.51:554/live2.sdp latency=200 ! rtph264depay ! ffdec_h264 ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink"
 #python vision.py "souphttpsrc location=http://192.168.1.50:81/search?camera_id=22984&caps=video/aylook,profile=max&time_start=20140515172800&time_end=99999999999999&autoseek=&user=admin&hash=c8e3bef8a9f70725bbc6045a8f7aed4e&uuid=0340&aylook=0&autoplay=true ! gdpdepay ! ffdec_mpeg4 ! ffmpegcolorspace ! video/x-raw-rgb,bpp=24,depth=24 ! opencv ! ffmpegcolorspace ! ximagesink sync=false"
 
+
 class OpenCV(gst.Element):
     __gstdetails__ = ('CrazyOpenCV', 'Transform',
                       'OpenCV chain element', 'Luca Ognibene')
@@ -155,8 +156,8 @@ class OpenCV(gst.Element):
             return
         m = self.passgrid.argmin()
         m = np.unravel_index(m, self.passgrid.shape)
-        self.targetx = m[0] * self.gw + self.gw/2
-        self.targety = m[1] * self.gh + self.gh/2
+        self.targetx = m[0] * self.gw + self.gw / 2
+        self.targety = m[1] * self.gh + self.gh / 2
 
     def find_bot(self, frame):
         # FIXME:
@@ -262,7 +263,6 @@ gst.element_register(OpenCV, "opencv", gst.RANK_MARGINAL)
 
 
 if __name__ == '__main__':
-    import sys
     print "Use --gst-debug=python:3 to see output from this example"
     #bin = gst.parse_launch("videotestsrc ! video/x-raw-rgb,width=320,height=240,framerate=5/1 ! opencv ! ffmpegcolorspace ! xvimagesink")
     bin = gst.parse_launch(sys.argv[1])
@@ -276,14 +276,10 @@ if __name__ == '__main__':
             err, debug = message.parse_error()
             print "Error: %s" % err, debug
             mainloop.quit()
-        elif t == gst.MESSAGE_TAG:
-            tl = message.parse_tag()
-            #for k in tl.keys():
-            #    print(k, tl[k])
         return True
         
-    bin.get_bus().add_watch(bus_event)        
-    bin.set_state(gst.STATE_PLAYING)        
+    bin.get_bus().add_watch(bus_event)
+    bin.set_state(gst.STATE_PLAYING)
     mainloop = gobject.MainLoop()
     try:
         mainloop.run()
