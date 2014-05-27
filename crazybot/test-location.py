@@ -3,8 +3,8 @@ import sys
 import numpy as np
 
 
-GW = 16
-GH = 16
+GW = 12
+GH = 12
 SIZE = 60
 
 
@@ -33,7 +33,7 @@ def addgrid(grid, bx, by, prob=1, size=10, num=10, weight=1):
 
 def analyze(out, mask, color, grid=None, weight=1):
     contours, hierarchy = cv2.findContours(mask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # finding contour with maximum area and store it as best_cnt
+    # FIXME: pr should not be linked to max area but area similar to cbo expected size (maybe last size)
     max_area = 0
     for cnt in contours:
         area = cv2.contourArea(cnt)
@@ -81,6 +81,7 @@ lx = ly = None
 
 while(1):
     ret, frame = cap.read()
+    orig = frame.copy()
     frame = cv2.blur(frame, (3, 3))
     # fgmask = fgbg.apply(frame)
 
@@ -100,7 +101,6 @@ while(1):
     # res2 = cv2.convertScaleAbs(avg2)
     d = cv2.absdiff(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), res1)
     mask2 = cv2.threshold(d, 20, 255, cv2.THRESH_BINARY)[1]
-    # opening
     # mask2 = cv2.morphologyEx(mask2, cv2.MORPH_OPEN, np.ones((3, 3),np.uint8))
     
     analyze(None, mask, (0, 0, 255), grid, 0.5)
@@ -111,13 +111,13 @@ while(1):
         addgrid(grid, lx, ly, prob=1, size=SIZE * 3, num=300, weight=0.4)
 
     (lx, ly) = getbestpos(grid)
-    cv2.circle(frame, (lx, ly), 5, (0, 0, 255), -1)
+    cv2.circle(orig, (lx, ly), 5, (0, 0, 255), -1)
     display_grid(grid, frame)
 
     cv2.imshow('mask-motion-2', mask2)
     cv2.imshow('mask-color', mask)
-    cv2.imshow('orig', frame)
-    cv2.imshow('grid', grid)
+    cv2.imshow('orig', orig)
+    cv2.imshow('prob', frame)
     k = cv2.waitKey(30) & 0xff
     if k == 27:
         break
