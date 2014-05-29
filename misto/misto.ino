@@ -51,6 +51,8 @@ ModbusSlave mbs;
 #define IRRIGA_PING_OK 40000
 //#define MODBUS_TIME 5000
 
+#define DEBUG
+
 static byte myNodeID = 1;   // node ID used for this unit
 
 byte page = 0;
@@ -130,10 +132,10 @@ static void save_ds () {
   byte cc[2];
   
   get_page_offset(mem_counter, &page, &offset);
-  mem.save(page, &ds, offset*DSPAGE_SIZE, sizeof ds);
+  mem.save(page, offset*DSPAGE_SIZE, &ds, sizeof ds);
   cc[0] = mem_counter / 256;
   cc[1] = mem_counter % 256;
-  mem.save(0, cc, 0, sizeof cc);
+  mem.save(0, 0, cc, sizeof cc);
   mem_counter ++;
   //check mem overflow and stay safe..
   if (mem_counter >= DS_IN_PAGE * (512 - DSPAGE_START)) {
@@ -147,24 +149,24 @@ static void clear_mem() {
   byte d[256];
   memset(d, 0, sizeof d);
   for (p=0; p<512; p++)
-    mem.save(p, d, 0, sizeof d);
+    mem.save(p, 0, d, sizeof d);
   mem_counter = 0;
 }
 
 static int load_counter () {
   byte cc[2];
   int r;
-  mem.load(0, cc, 0, sizeof cc);  
+  mem.load(0, 0, cc, sizeof cc);  
   r = cc[0]*256 + cc[1];
   return r;
 }
 
 static void load_irriga_cmd () {
-  mem.load(1, &ic, 0, sizeof ic);  
+  mem.load(1, 0, &ic, sizeof ic);  
 }
 
 static void save_irriga_cmd() {
-  mem.save(1, &ic, 0, sizeof ic);  
+  mem.save(1, 0, &ic, sizeof ic);  
 }
 
 static void setIrrigaCmd (byte d, byte h, byte m, byte cmd, byte v1, byte v2) {
@@ -183,7 +185,7 @@ static struct data_status load_ds (int c) {
   byte offset;
   
   get_page_offset(c, &page, &offset);
-  mem.load(page, &dsg, offset*DSPAGE_SIZE, sizeof dsg);
+  mem.load(page, offset*DSPAGE_SIZE, &dsg, sizeof dsg);
   return dsg;
 }
 
@@ -258,7 +260,7 @@ void setup() {
   //less bandwidth more range!
   rf12_control(0xC647);  
   //use this line to set/correct time  
-  //setDate(111, 03, 28, 12, 37, 0);
+  //setDate(114, 05, 29, 21, 48, 0);
   ds.t1 = 0;
   ds.t2 = 0;
   ds.t3 = 0;
@@ -373,8 +375,17 @@ void sendIrrigaCmd(int cmd, int v1, int v2) {
   }else
     return ;
   for (byte i = 0; i < RETRY_LIMIT; ++i) {
-    while (!rf12_canSend())
+    int maxloop = 100;
+    while (!rf12_canSend()) {
+      // HACK around jeenode hang inside rf12_recvDone...
+      maxloop -= 1;
       rf12_recvDone();
+      if (maxloop == 0) {
+        maxloop = 100;
+        rf12_initialize(myNodeID, RF12_868MHZ);
+        rf12_control(0xC647);  
+      }
+    }
     rf12_sendStart(RF12_HDR_ACK | RF12_HDR_DST | 2, &payload, len);
     rf12_sendWait(0);
     byte acked = waitForAck();
@@ -481,7 +492,6 @@ void loop() {
     doMeasure();
     intimer.set(MEASURE_TIME);
   }
-
   if (irrigatimer.poll()) {
     checkIrriga();
     irrigatimer.set(IRRIGA_CHECK_TIMER);
@@ -491,7 +501,6 @@ void loop() {
     sendIrrigaCmd(7, 0, 0);
     irrigapingtimer.set(IRRIGA_PING_TIMER);  
   }
-
   lcd.setCursor(0, 0);
   if (page == 0){
     if (ds.t1 >= 0) {
