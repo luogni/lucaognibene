@@ -22,6 +22,7 @@ s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 s.bind((host, port))
 
+
 def open_serial():
     for i in range(0, 10):
         d = "/dev/ttyUSB%d" % i
@@ -36,8 +37,8 @@ def open_serial():
             continue
     return None
 
+
 def send(m0, m1, r, sl=0, repeat=1):
-    
     rr = repeat
     while rr > 0:
         ser.write('67,77,%d,%d,%d,20 s' % (int(m0), int(m1), int(r)))
@@ -65,7 +66,7 @@ else:
         message, address = s.recvfrom(8192)
         (ts, y, z, r) = [m.strip() for m in message.split(',')]
         #print ts, y, z, r
-        if (time.time() > lastr + 2)and(lastr > 0):
+        if (time.time() > lastr + 2)and(lastr > 0)and(MODE != 'norestart'):
             print "restart comm"
             lasts = 0
         lastr = time.time()
@@ -81,8 +82,8 @@ else:
             m1 *= (1 + turn)
         elif turn > 0:
             m0 *= (1 - turn)
+        print int(m0), int(m1), r
         if (ser is not None):
             # swap or not based on how i mounted them..
-            print int(m0), int(m1), r
             lasth = time.time()
             send(m0, m1, r)
