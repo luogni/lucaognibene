@@ -6,7 +6,7 @@ import time
 
 GW = 12
 GH = 12
-SIZE = 15
+SIZE = int(sys.argv[2])  # 15
 MAXSPEED = 20
 
 
@@ -118,8 +118,10 @@ while(1):
         # grid = np.zeros([ngw, ngh])
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
-        mask1 = cv2.inRange(hsv, np.array([0, 40, 40], dtype=np.uint8), np.array([15, 255, 255], dtype=np.uint8))
-        mask2 = cv2.inRange(hsv, np.array([159, 40, 40], dtype=np.uint8), np.array([179, 255, 255], dtype=np.uint8))
+        # mask1 = cv2.inRange(hsv, np.array([0, 40, 40], dtype=np.uint8), np.array([15, 255, 255], dtype=np.uint8))
+        # mask2 = cv2.inRange(hsv, np.array([159, 40, 40], dtype=np.uint8), np.array([179, 255, 255], dtype=np.uint8))
+        mask1 = cv2.inRange(hsv, np.array([0, 40, 40], dtype=np.uint8), np.array([4, 255, 255], dtype=np.uint8))
+        mask2 = cv2.inRange(hsv, np.array([175, 40, 40], dtype=np.uint8), np.array([179, 255, 255], dtype=np.uint8))
         mask = mask1 | mask2
 
         cv2.accumulateWeighted(cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY), avg1, 0.2)
