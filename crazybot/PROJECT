@@ -32,5 +32,4 @@ KISS
    and then i should merge them and find the best one. Add a method also based on last location.
  * think about setting lower thresholds near old bot position.. if i know it should be there look better
    until i find something that looks like it
- * don't use grid because it's hard to get something working good.. keep
-   points and maybe use a cluster algorithm to find center
+ * try ip camera android app: gst-launch-0.10 souphttpsrc location="http://192.168.1.3:8080/video" ! multipartdemux ! jpegdec ! xvimagesink sync=false  only 640x480....
