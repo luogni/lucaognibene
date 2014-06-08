@@ -260,7 +260,7 @@ void setup() {
   //less bandwidth more range!
   rf12_control(0xC647);  
   //use this line to set/correct time  
-  //setDate(114, 05, 29, 21, 48, 0);
+  //setDate(114, 6, 8, 10, 44, 0);
   ds.t1 = 0;
   ds.t2 = 0;
   ds.t3 = 0;
