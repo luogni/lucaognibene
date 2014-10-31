@@ -1,5 +1,9 @@
 #include <JeeLib.h>
 
+//FIXME:
+// * measure voltage only with no load
+// * change minimum (3.8 per cell)
+
 PortI2C eport (4);
 
 Port one (3);
@@ -9,7 +13,9 @@ byte one_value = 0;
 byte reverse_value = 0;
 MilliTimer autotimer, batterytimer;
 byte mode = 0;
-#define DEBUG
+//#define DEBUG
+#define BATTERYMIN (0)     // nimh
+#define BATTERYMIN (7000)  // lipo 2s
 
 struct data_status {
   byte prefix;
@@ -90,7 +96,7 @@ void loop() {
     one.anaWrite(one_value);
     rev.digiWrite(reverse_value);
   }
-  if (batterytimer.poll(60000)) {
+  if ((one_value == 0)&&(batterytimer.poll(60000))) {
     int data = one.anaRead();
     // 27 and 68 are voltage divider resistors, 11.33 is (3.3 / 1024) * ((27 + 68.0) / 27.0) * 1000    
     int bv = data * 11.33;
@@ -98,7 +104,7 @@ void loop() {
     Serial.print("battery "); Serial.print(data); Serial.print(" "); Serial.println(bv);
 #endif
     doReport(bv);
-    if (bv < 5000) {
+    if (bv < BATTERYMIN) {
       while (true) {delay(60000);};
     }      
   }
