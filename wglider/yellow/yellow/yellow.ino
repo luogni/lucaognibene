@@ -12,10 +12,10 @@ static byte myNodeID = 21;
 byte one_value = 0;
 byte reverse_value = 0;
 MilliTimer autotimer, batterytimer;
-byte mode = 0;
-//#define DEBUG
+char mode = -1;
+#define DEBUG
 #define BATTERYMIN (0)     // nimh
-#define BATTERYMIN (7000)  // lipo 2s
+//#define BATTERYMIN (7000)  // lipo 2s
 
 struct data_status {
   byte prefix;
@@ -38,10 +38,18 @@ void setup() {
 }
 
 static void doReport(int bl) {
+  int maxloop = 100;
   ds.prefix = 'Y';
   ds.batterylevel = bl;
-  while (!rf12_canSend())
-      rf12_recvDone();
+  while (!rf12_canSend()) {
+    // HACK around jeenode hang inside rf12_recvDone...
+    maxloop -= 1;
+    rf12_recvDone();
+    if (maxloop == 0) {
+      maxloop = 100;
+      rf12_initialize(myNodeID, RF12_868MHZ);
+   }
+  }
   rf12_sendStart(0, &ds, sizeof ds);
   rf12_sendWait(0);  
 }
@@ -80,7 +88,7 @@ void loop() {
     one.anaWrite(one_value);
     rev.digiWrite(reverse_value);
   }
-  if (autotimer.poll(30000)) {
+  if ((autotimer.poll(30000))||(mode == -1)) {
     mode ++;
     if (mode == 4) mode = 0;
     if (mode == 0) {
@@ -95,8 +103,11 @@ void loop() {
     }
     one.anaWrite(one_value);
     rev.digiWrite(reverse_value);
+    if (one_value == 0) {
+      batterytimer.set(5000);
+    }    
   }
-  if ((one_value == 0)&&(batterytimer.poll(60000))) {
+  if (batterytimer.poll()) {
     int data = one.anaRead();
     // 27 and 68 are voltage divider resistors, 11.33 is (3.3 / 1024) * ((27 + 68.0) / 27.0) * 1000    
     int bv = data * 11.33;
@@ -105,7 +116,8 @@ void loop() {
 #endif
     doReport(bv);
     if (bv < BATTERYMIN) {
-      while (true) {delay(60000);};
+      while (true) {delay(6000);};
     }      
   }
+  delay(10);
 }
