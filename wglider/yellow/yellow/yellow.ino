@@ -1,9 +1,5 @@
 #include <JeeLib.h>
 
-//FIXME:
-// * measure voltage only with no load
-// * change minimum (3.8 per cell)
-
 PortI2C eport (4);
 
 Port one (3);
@@ -14,8 +10,8 @@ byte reverse_value = 0;
 MilliTimer autotimer, batterytimer;
 char mode = -1;
 #define DEBUG
-#define BATTERYMIN (0)     // nimh
-//#define BATTERYMIN (7000)  // lipo 2s
+//#define BATTERYMIN (0)     // nimh
+#define BATTERYMIN (7200)  // lipo 2s
 
 struct data_status {
   byte prefix;
