@@ -89,13 +89,13 @@ void loop() {
     if (mode == 4) mode = 0;
     if (mode == 0) {
       reverse_value = 0;
-      one_value = 255;
+      one_value = 120;
     }else if ((mode == 1)or(mode == 3)) {
       reverse_value = 0;
       one_value = 0;
     }else if (mode == 2) {
       reverse_value = 1;
-      one_value = 255;
+      one_value = 120;
     }
     one.anaWrite(one_value);
     rev.digiWrite(reverse_value);
