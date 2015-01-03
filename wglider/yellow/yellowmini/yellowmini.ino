@@ -2,7 +2,7 @@ const int mpowPin = 3;
 const int mrevPin = 2;
 const int battPin = A0;
 const int ledPin = 13;
-char mode = -1;
+
 typedef enum ReportMode{MOTOR, NOPOWER, STANDBY};
 #define DEBUG
 //#define BATTERYMIN (0)     // nimh
@@ -68,10 +68,10 @@ void doBattery() {
 }
 
 void loop() {
-  setMotor(0, 200, 10000);
-  setMotor(0, 0, 1000);
+  setMotor(0, 200, 20000);
+  setMotor(0, 0, 10000);
   doBattery();
-  setMotor(1, 200, 10000);
-  setMotor(0, 0, 1000);
+  setMotor(1, 200, 20000);
+  setMotor(0, 0, 10000);
 }  
 
