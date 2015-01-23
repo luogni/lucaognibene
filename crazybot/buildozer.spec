@@ -52,7 +52,7 @@ fullscreen = 1
 #
 
 # (list) Permissions
-android.permissions = INTERNET
+android.permissions = INTERNET,WAKE_LOCK
 
 # (int) Android API to use
 #android.api = 14
@@ -107,7 +107,7 @@ android.permissions = INTERNET
 
 # (bool) Indicate whether the screen should stay on
 # Don't forget to add the WAKE_LOCK permission if you set this to True
-#android.wakelock = False
+android.wakelock = True
 
 # (list) Android application meta-data to set (key=value format)
 #android.meta_data =
