@@ -1,0 +1,9 @@
+{
+  "name": "aydata",
+  "private": true,
+  "dependencies": {
+    "bootstrap-sass-official": "~3.2.0",
+    "wookmark-jquery": "~2.0.0",
+    "datejs": "~1.0.0-rc3"
+  }
+}

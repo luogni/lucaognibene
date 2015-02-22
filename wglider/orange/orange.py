@@ -44,4 +44,7 @@ else:
         spl = line.split(' ')
         if (spl[0] == "OK")and(int(spl[1]) == 21)and(int(spl[2]) == ord('Y')):
             level = int(spl[4]) * 256 + int(spl[3])
-            print datetime.datetime.now(), level
+            with open("battery.log", "a") as f:
+                print datetime.datetime.now(), level
+                f.write(str(datetime.datetime.now()) + " " + str(level) + "\n")
+
