@@ -5,3 +5,10 @@ xul
 *~
 crazybot/.buildozer
 crazybot/bin
+
+log
+luca_ognibene_mcv.aux
+luca_ognibene_mcv.dvi
+luca_ognibene_mcv.log
+luca_ognibene_mcv.out
+texput.log

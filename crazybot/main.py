@@ -17,32 +17,56 @@ __version__ = '0.1'
 UDP_IP = "192.168.1.255"
 UDP_PORT = 5555
 SPORT = None
+# TPOWER = 70
+# TTURN = 40
 
 
 class CrazyBotGame(Widget):
 
     orient1 = NumericProperty(0)
     orient2 = NumericProperty(0)
+    m1 = StringProperty("")
+    m2 = StringProperty("")
     reverse = NumericProperty(0)
     device = StringProperty("nothing")
+
+    def get_motor_data(self, z, y, r):
+        tpower = int(self.ids.powersl.value)
+        tturn = int(self.ids.turnsl.value)
+        power = int(max(0, min(tpower - float(z), tpower)) * (255.0 / tpower))  # 0  255
+        turn = -1 * max(-tturn, min(float(y), tturn)) / float(tturn)  # -1  +1
+        m0 = m1 = power
+        if turn < 0:
+            m1 *= (1 + turn)
+        elif turn > 0:
+            m0 *= (1 - turn)
+        self.m1 = "%d %d" % (int(m1), self.orient1)
+        self.m2 = "%d %d" % (int(m0), self.orient2)
+        self.device = "%d / %d" % (tpower, tturn)
+        return int(m1), int(m0), r
 
     def send_data(self, data):
         payload = "42,%d,119,%s," % (len(data) + 1, ",".join([str(a) for a in data]))
         if SPORT is not None:
             SPORT.write(payload, 200)
-            self.device = payload
+            # self.device = payload
 
     def update(self, dt):
         if Hardware is not None:
             values = Hardware.orientationSensorReading()
             self.orient1 = int(values[1])
             self.orient2 = int(values[2])
+        else:
+            self.orient1 = 40
+            self.orient2 = 0
         if SPORT is not None:
-            data = [0] * 100
+            # data = [0] * 100
             # num = SPORT.read(data, 100)
             # print num, data
             # self.device = "%d %s" % (num, str(data))
-        self.send_data([self.orient1, self.orient2, self.reverse])
+            pass
+        v1, v2, r = self.get_motor_data(self.orient2, self.orient1, self.reverse)
+        self.send_data([v1, v2, r])
 
 
 class CrazyBotApp(App):

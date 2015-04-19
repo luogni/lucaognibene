@@ -6,13 +6,13 @@
       font_size: 40  
       center_x: root.width / 4
       top: root.top - 50
-      text: str(root.orient1)
+      text: str(root.m1)
 
    Label:
       font_size: 40  
       center_x: root.width * 3 / 4
       top: root.top - 50
-      text: str(root.orient2)
+      text: str(root.m2)
 
    Label:
       font_size: 40  
@@ -33,3 +33,26 @@
       text: "reverse"
       on_press: root.reverse = 1
       on_release: root.reverse = 0
+
+   Slider:
+      id: powersl
+      font_size: 40
+      center_x: root.width / 2
+      top: root.top - 300
+      size: (500, 40)
+      min: 0
+      max: 100
+      value: 70
+
+   Slider:
+      id: turnsl
+      font_size: 40
+      center_x: root.width / 2
+      top: root.top - 380
+      size: (500, 40)
+      min: 0
+      max: 100
+      value: 40
+
+
+   
