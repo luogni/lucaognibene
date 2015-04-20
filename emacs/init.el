@@ -14,13 +14,11 @@
  '(elpy-modules
    (quote
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
- '(org-mobile-encryption-password "andnowska")
- '(org-mobile-use-encryption t)
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("marmalade" . "http://marmalade-repo.org/packages/")
-     ("MELPA" . "http://melpa.milkbox.net/packages/"))))
+     ("MELPA" . "http://melpa.org/packages/"))))
  '(projectile-project-root-files
    (quote
     ("rebar.config" "project.clj" "SConstruct" "pom.xml" "build.sbt" "build.gradle" "Gemfile" "requirements.txt" "package.json" "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml" "mix.exs" "tox.ini")))
