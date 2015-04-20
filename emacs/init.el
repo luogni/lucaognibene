@@ -14,6 +14,7 @@
  '(elpy-modules
    (quote
     (elpy-module-company elpy-module-eldoc elpy-module-flymake elpy-module-pyvenv elpy-module-yasnippet elpy-module-sane-defaults)))
+ '(multi-term-switch-after-close nil)
  '(package-archives
    (quote
     (("gnu" . "http://elpa.gnu.org/packages/")
@@ -160,7 +161,7 @@
   (interactive "sDestination Branch? \nsRevisions? ")
   (multi-term)
   (comint-send-string (current-buffer) (format "cd ~/Progetti/aylook/%s\n" branch))
-  (comint-send-string (current-buffer) "aysvn update\n")
+  (comint-send-string (current-buffer) "svn update --ignore-externals\n")
   (comint-send-string (current-buffer) (format "svn merge -c %s ../trunk\n" revision))
   (comint-send-string (current-buffer) "svn diff | less")
   )
