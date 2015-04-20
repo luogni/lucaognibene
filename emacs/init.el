@@ -1,3 +1,6 @@
+;; defaults
+(setq fab-path "fab")
+
 (load-file "~/.private.el")
 
 (custom-set-variables
@@ -130,7 +133,7 @@
   (interactive "sIP? \nsCMD? ")
   (multi-term)
   (comint-send-string (current-buffer) "cd ~/Progetti/aylook/trunk\n")
-  (comint-send-string (current-buffer) (format "/home/luogni/.virtualenvs/aypy/bin/fab -H %s %s\n" ip cmd))
+  (comint-send-string (current-buffer) (format "%s -H %s %s\n" fab-path ip cmd))
 )  
 
 (defun ay-start ()
@@ -178,6 +181,10 @@
 (global-set-key (kbd "C-c m") 'ay-merge)
 (global-set-key (kbd "C-c p") 'pocket-put)
 (global-set-key (kbd "C-c w") (lambda () (interactive) (find-file "~/Dropbox/snow.org")))
+(global-set-key (kbd "<f8>") 'winner-undo)
+(global-set-key (kbd "C-x C-i") 'idomenu)
+(global-set-key "\C-x\C-m" 'smex)
+(global-set-key "\C-c\C-m" 'smex)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (scroll-bar-mode -1)
