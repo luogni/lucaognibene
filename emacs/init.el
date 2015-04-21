@@ -183,8 +183,9 @@
 (global-set-key (kbd "C-c w") (lambda () (interactive) (find-file "~/Dropbox/snow.org")))
 (global-set-key (kbd "<f8>") 'winner-undo)
 (global-set-key (kbd "C-x C-i") 'idomenu)
-(global-set-key "\C-x\C-m" 'smex)
-(global-set-key "\C-c\C-m" 'smex)
+(global-set-key (kbd "C-x C-m") 'smex)
+(global-set-key (kbd "C-c C-m") 'smex)
+(global-set-key (kbd "C-c **") 'calculator)
 
 (defalias 'yes-or-no-p 'y-or-n-p)
 (scroll-bar-mode -1)
