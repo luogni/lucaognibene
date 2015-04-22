@@ -152,7 +152,7 @@
 
 (defun ay-ssh (ip)
   (interactive "sIP? ")
-  (start-process "AySSH" "ttttt" "gnome-terminal" "--maximize" "-e" (format "ayssh %s" ip))
+  (start-process "AySSH" nil "gnome-terminal" "--maximize" "-e" (format "ayssh %s" ip))
   )
 
 (defun ay-firefox ()

@@ -1,2 +1,3 @@
 url_remoting_fn = load_url_in_new_buffer;
 homepage = "about:blank";
+session_pref("xpinstall.whitelist.required", false);
