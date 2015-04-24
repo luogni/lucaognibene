@@ -163,10 +163,11 @@
 (defun ay-merge (branch revision)
   (interactive "sDestination Branch? \nsRevisions? ")
   (multi-term)
-  (comint-send-string (current-buffer) (format "cd ~/Progetti/aylook/%s\n" branch))
+  (setq wd (format "~/Progetti/aylook/%s" branch))
+  (comint-send-string (current-buffer) (format "cd %s\n" wd))
   (comint-send-string (current-buffer) "svn update --ignore-externals\n")
   (comint-send-string (current-buffer) (format "svn merge -c %s ../trunk\n" revision))
-  (comint-send-string (current-buffer) "svn diff | less")
+  (comint-send-string (current-buffer) "echo \"check status C-x v d and commit\"\n")
   )
 
 (defun pocket-put ()
