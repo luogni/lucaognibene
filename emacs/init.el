@@ -90,6 +90,8 @@
 
 (autoload 'mew "mew" nil t)
 (autoload 'mew-send "mew" nil t)
+(setq mew-prog-pdf "evince")
+(setq mew-prog-text/html-ext "conkeror")
 
 ;; Optional setup (Read Mail menu):
 (setq read-mail-command 'mew)
