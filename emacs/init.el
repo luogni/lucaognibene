@@ -134,8 +134,11 @@
 (defun ay-fab (ip cmd)
   (interactive "sIP? \nsCMD? ")
   (multi-term)
+  (setq fab-options (format "-H %s" ip))
+  (if (equal ip "")
+      (setq fab-options ""))
   (comint-send-string (current-buffer) "cd ~/Progetti/aylook/trunk\n")
-  (comint-send-string (current-buffer) (format "%s -H %s %s\n" fab-path ip cmd))
+  (comint-send-string (current-buffer) (format "%s %s %s\n" fab-path fab-options cmd))
 )  
 
 (defun ay-start ()
@@ -153,7 +156,9 @@
   )
 
 (defun ay-ssh (ip)
-  (interactive "sIP? ")
+  (interactive (list
+                (read-string (format "HOST(%s)? " (thing-at-point 'word))
+                             nil nil (thing-at-point 'word))))
   (start-process "AySSH" nil "gnome-terminal" "--maximize" "-e" (format "ayssh %s" ip))
   )
 
