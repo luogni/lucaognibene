@@ -188,7 +188,7 @@
 (global-set-key (kbd "C-c f") 'ay-fab)
 (global-set-key (kbd "C-c m") 'ay-merge)
 (global-set-key (kbd "C-c p") 'pocket-put)
-(global-set-key (kbd "C-c w") (lambda () (interactive) (find-file "~/Dropbox/snow.org")))
+(global-set-key (kbd "C-c w") (lambda () (interactive) (find-file "~/Seafile/Documents/snow.org")))
 (global-set-key (kbd "<f8>") 'winner-undo)
 (global-set-key (kbd "C-x C-i") 'idomenu)
 (global-set-key (kbd "C-x C-m") 'smex)
