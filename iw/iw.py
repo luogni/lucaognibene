@@ -30,8 +30,8 @@ def stats(big, period, fname, checkmin, ignore):
             newperiod = month + "/" + year
             if newperiod != oldperiod:
                 if oldperiod != "":
+                    print oldperiod, money - checkmin
                     if (checkmin == 0)or(money <= checkmin):
-                        print oldperiod, money
                         for b in bigs:
                             print " - ", b
                 oldperiod = newperiod
