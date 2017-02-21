@@ -63,6 +63,10 @@
  ;; If there is more than one, they won't work right.
  )
 
+
+(setq browse-url-browser-function 'browse-url-generic
+      browse-url-generic-program "/usr/bin/firefox")
+
 (require 'package)
 (add-to-list 'package-archives
              '("elpy" . "http://jorgenschaefer.github.io/packages/"))
@@ -73,7 +77,7 @@
       `(("aycloud"
 	:host "aycloud.it"
 	:port (8767)
-	:channels ("#aylook")
+	:channels ("#aylook" "#aylook-it")
 	:pass ,anteklab-password
 	)))
 
@@ -129,7 +133,7 @@
   (interactive)
   (multi-term)
   (rename-buffer "vpn")
-  (comint-send-string (current-buffer) "vpnay\n")
+  ;; (comint-send-string (current-buffer) "vpnay\n")
   (comint-send-string (current-buffer) (format "%s\n" anteklab-vpn-cmd))
   )
 
@@ -166,7 +170,12 @@
 
 (defun ay-firefox ()
   (interactive)
-  (start-process "AyFF" nil "firefox" "-P" "dev" "--new-instance")
+  (start-process "AyFF" nil "~/Apps/ffchroot.sh")
+  )
+
+(defun ay-conkeror ()
+  (interactive)
+  (start-process "AyCC" nil "~/Apps/firefox/firefox" "-app" "/usr/share/conkeror/application.ini")
   )
 
 (defun ay-merge (branch revision)
@@ -186,6 +195,7 @@
 
 (global-set-key (kbd "C-c t") 'ay-terminal)
 (global-set-key (kbd "C-c x") 'ay-firefox)
+(global-set-key (kbd "C-c c") 'ay-conkeror)
 (global-set-key (kbd "C-c s") 'ay-ssh)
 (global-set-key (kbd "C-c f") 'ay-fab)
 (global-set-key (kbd "C-c m") 'ay-merge)
@@ -202,3 +212,15 @@
 (winner-mode 1)
 
 (setq twittering-use-master-password t)
+
+(add-hook 'rust-mode-hook 'cargo-minor-mode)
+(setq racer-cmd "~/.cargo/bin/racer") ;; Rustup binaries PATH
+(setq racer-rust-src-path "/home/luogni/Progetti/rust/src") ;; Rust source code PATH
+
+(add-hook 'rust-mode-hook #'racer-mode)
+(add-hook 'rust-mode-hook #'flycheck-mode)
+(add-hook 'racer-mode-hook #'eldoc-mode)
+(add-hook 'racer-mode-hook #'company-mode)
+(add-hook 'flycheck-mode-hook #'flycheck-rust-setup)
+(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+(setq company-tooltip-align-annotations t)
