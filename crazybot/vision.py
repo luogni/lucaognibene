@@ -264,8 +264,8 @@ gst.element_register(OpenCV, "opencv", gst.RANK_MARGINAL)
 
 if __name__ == '__main__':
     print "Use --gst-debug=python:3 to see output from this example"
-    #bin = gst.parse_launch("videotestsrc ! video/x-raw-rgb,width=320,height=240,framerate=5/1 ! opencv ! ffmpegcolorspace ! xvimagesink")
-    bin = gst.parse_launch(sys.argv[1])
+    bin = gst.parse_launch("videotestsrc ! video/x-raw-rgb,width=320,height=240,framerate=5/1 ! opencv ! ffmpegcolorspace ! xvimagesink")
+    # bin = gst.parse_launch(sys.argv[1])
 
     def bus_event(bus, message):
         # print message.type
