@@ -3,7 +3,7 @@
 
 (load-file "~/.private.el")
 
-(load-file "/usr/share/emacs24/site-lisp/gettext/po-mode.el")
+(load-file "/usr/share/emacs25/site-lisp/gettext/po-mode.el")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -12,7 +12,7 @@
  ;; If there is more than one, they won't work right.
  '(custom-safe-themes
    (quote
-    ("a041a61c0387c57bb65150f002862ebcfe41135a3e3425268de24200b82d6ec9" "e80932ca56b0f109f8545576531d3fc79487ca35a9a9693b62bf30d6d08c9aaf" "764e3a6472a3a4821d929cdbd786e759fab6ef6c2081884fca45f1e1e3077d1d" default)))
+    ("ad950f1b1bf65682e390f3547d479fd35d8c66cafa2b8aa28179d78122faa947" "4f5bb895d88b6fe6a983e63429f154b8d939b4a8c581956493783b2515e22d6d" "12b4427ae6e0eef8b870b450e59e75122d5080016a9061c9696959e50d578057" "a041a61c0387c57bb65150f002862ebcfe41135a3e3425268de24200b82d6ec9" "e80932ca56b0f109f8545576531d3fc79487ca35a9a9693b62bf30d6d08c9aaf" "764e3a6472a3a4821d929cdbd786e759fab6ef6c2081884fca45f1e1e3077d1d" default)))
  '(elfeed-feeds
    (quote
     ("http://192.168.5.111/trac/timeline?changeset=on&max=50&daysback=90&format=rss" "http://192.168.5.111/trac/timeline?ticket=on&ticket_details=on&max=50&daysback=90&format=rss")))
@@ -25,6 +25,9 @@
     (("gnu" . "http://elpa.gnu.org/packages/")
      ("marmalade" . "http://marmalade-repo.org/packages/")
      ("MELPA" . "http://melpa.org/packages/"))))
+ '(package-selected-packages
+   (quote
+    (w3m lua-mode ztree smex racer multi-term magit flycheck-rust elpy elfeed circe cargo arduino-mode ample-theme ag)))
  '(projectile-project-root-files
    (quote
     ("rebar.config" "project.clj" "SConstruct" "pom.xml" "build.sbt" "build.gradle" "Gemfile" "requirements.txt" "package.json" "gulpfile.js" "Gruntfile.js" "bower.json" "composer.json" "Cargo.toml" "mix.exs" "tox.ini")))
@@ -82,6 +85,7 @@
 	)))
 
 (load-theme `ample t)
+;; (load-theme `leuven t)
 (setq ido-enable-flex-matching t)
 (setq ido-everywhere t)
 (ido-mode 1)
@@ -147,10 +151,19 @@
   (comint-send-string (current-buffer) (format "%s %s %s\n" fab-path fab-options cmd))
 )  
 
+(defun ay-stats (ip)
+  (interactive "sIP? ")
+  (multi-term)
+  (setq fab-options (format "-H %s" ip))
+  (comint-send-string (current-buffer) "cd ~/Progetti/aylook/trunk\n")
+  (comint-send-string (current-buffer) (format "%s %s stats\n" fab-path fab-options))
+)  
+
 (defun ay-start ()
   (interactive)
   (circe "aycloud")
-  (ay-vpn)
+  (w3m "http://192.168.5.111/trac/wiki/LucaOgnibene")
+  ;; (ay-vpn)
 ;  (ay-fab "125" "deploy:what=aymaster,update=t")
   (mew)
   (elfeed)
@@ -200,7 +213,8 @@
 (global-set-key (kbd "C-c f") 'ay-fab)
 (global-set-key (kbd "C-c m") 'ay-merge)
 (global-set-key (kbd "C-c p") 'pocket-put)
-(global-set-key (kbd "C-c w") (lambda () (interactive) (find-file "~/Seafile/Documents/snow.org")))
+(global-set-key (kbd "C-c i") 'ay-stats)
+(global-set-key (kbd "C-c w") (lambda () (interactive) (find-file "~/Dropbox/Documents/snow.org")))
 (global-set-key (kbd "<f8>") 'winner-undo)
 (global-set-key (kbd "C-x C-i") 'idomenu)
 (global-set-key (kbd "C-x C-m") 'smex)
